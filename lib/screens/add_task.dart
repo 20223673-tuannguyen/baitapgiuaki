@@ -8,7 +8,7 @@ class AddTaskScreen extends StatefulWidget {
   AddTaskScreen(this.onAdd);
 
   @override
-  _AddTaskScreenState createState() => _AddTaskScreenState();
+  State<AddTaskScreen> createState() => _AddTaskScreenState();
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
@@ -20,6 +20,30 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   bool remind = false;
   String remindType = "Chuông";
 
+  Future pickDateTime() async {
+
+    DateTime? date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2030),
+    );
+
+    if(date == null) return;
+
+    TimeOfDay? time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if(time == null) return;
+
+    setState(() {
+      timeController.text =
+      "${date.day}/${date.month}/${date.year} - ${time.format(context)}";
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -30,6 +54,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
       body: Padding(
         padding: EdgeInsets.all(20),
+
         child: Column(
           children: [
 
@@ -42,6 +67,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
             TextField(
               controller: timeController,
+              readOnly: true,
+              onTap: pickDateTime,
               decoration: InputDecoration(
                 labelText: "Thời gian",
               ),
@@ -68,19 +95,23 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               DropdownButton<String>(
                 value: remindType,
                 items: [
+
                   DropdownMenuItem(
                     value: "Chuông",
                     child: Text("Chuông"),
                   ),
+
                   DropdownMenuItem(
                     value: "Email",
                     child: Text("Email"),
                   ),
+
                   DropdownMenuItem(
                     value: "Thông báo",
                     child: Text("Thông báo"),
                   ),
                 ],
+
                 onChanged: (value){
                   setState(() {
                     remindType = value!;
@@ -91,10 +122,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             SizedBox(height: 20),
 
             ElevatedButton(
+
               child: Text("Ghi lại công việc"),
+
               onPressed: (){
 
-                Task newTask = Task(
+                Task task = Task(
                   name: nameController.text,
                   time: timeController.text,
                   location: locationController.text,
@@ -102,7 +135,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   remindType: remindType,
                 );
 
-                widget.onAdd(newTask);
+                widget.onAdd(task);
 
                 Navigator.pop(context);
               },

@@ -4,6 +4,7 @@ class Task {
   String location;
   bool remind;
   String remindType;
+  bool done;
 
   Task({
     required this.name,
@@ -11,5 +12,6 @@ class Task {
     required this.location,
     required this.remind,
     required this.remindType,
+    this.done = false,
   });
 }
